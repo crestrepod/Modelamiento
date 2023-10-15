@@ -69,6 +69,8 @@ if ( os.path.isfile(file_path) == True ):
         profile_distance    = parameters['profile_distance']
         profile_tolerance   = parameters['profile_tolerance']
 
+        tipo_cava = parameters['Cava']
+
 else:
     print('Parameters file not found')
     sys.exit(1)
@@ -186,124 +188,27 @@ def get_cp_rho(ts, coors, problem, equations=None, mode=None, **kwargs):
         
         cp_array = nm.ones(coors.shape)
         rho_array = nm.ones(coors.shape)
-        
-        #print('Type:',type(T_values),"Len: ",len(T_values),'Size',T_values.size)
-        #print('Type:',type(coors),"Len: ",len(coors),'Size',coors.size)
+    
 
         # Propiedades FCS --------------------------------------------------------------------------------------------        
-        if (extracto=='FCS'):
-            index1 = 0
-            for row in T_values:
-                index2 = 0
-                for value in row:
-                    if ( value>-3.6 ):
-                        
-                                
-                        cp_array[index1][index2] =((3.35 + (-1.27E-03*value) + (6.38E-05*(value**2)))*1000)*0.8 #J/kg °C
-                                               
-                        rho_array[index1][index2] =((-0.112*value) + 1128)*1.2 
+        if extracto == 'STK':
+            coeficientes_cp_positivo = [-5.31442424e-08,  3.39414118e-06, -7.63244649e-05,  7.11173325e-04, -1.83933655e-03,  3.34203004e+00]
+            coeficientes_cp_negativo = [2.46475116e-05, 3.01248763e-03, 1.39879835e-01, 3.07007061e+00, 3.19581201e+01, 1.32609805e+02]
+            
+            coeficientes_rho_positivo = [-3.31523246e-03, -5.68521821e-02,  1.12794191e+03]
+            coeficientes_rho_negativo = [2.29383704e-04, 2.41273487e-02, 9.16170874e-01, 1.50320862e+01, 1.16052005e+03]
+            
+            for index1, row in enumerate(T_values):
+                for index2, i in enumerate(row):
+                    if i > -3.36:
+                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_positivo))]) * 1000 *0.8
+                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_positivo))]) *1.2
                     else:
-                       
-                                                
-                        cp_array[index1][index2] = ((139 + (32.9* value) + (3.1*(value**2)) + (0.139*(value**3)) + (2.97E-03*(value**4)) + (2.41E-05*(value**5)))*1000)*1.2 #J/kg °C
-                        
-                       
-                        
-                        rho_array[index1][index2] =((1184 + (20.8*value) + (1.4*(value**2)) + (0.04*(value**3))+ (4.05E-04*(value**4))))*1.2
-                    index2 += 1
-                
-                index1 += 1      
+                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_negativo))]) * 1000 *1.2
+                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_negativo))]) *1.2
+
+
              
-        # Propiedades STK --------------------------------------------------------------------------------------------        
-        elif (extracto=='STK'):
-            #PROPIEDADES A DOS TRAMOS
-            index1 = 0
-            for row in T_values:
-                #print(row)
-                index2 = 0
-                for value in row:
-                    if ( value>-4.8 ):
-                        
-                        cp00=4.118
-                        cp10=-0.003419
-                        cp01=-2.56
-                        cp20=0.0004177
-                        cp11=0.0004968
-                        cp02=-0.09021
-                        cp30=-9.126e-6
-                        cp21=-0.0002003
-                        cp12=0.004938  
-                        
-                        cp_array[index1][index2] =(cp00+(cp10*value)+(cp01*x_s)+(cp20*(value**2))+(cp11*value*x_s)+(cp02*(x_s**2))+(cp30*(value**3))+(cp21*(value**2)*x_s)+(cp12*value*(x_s**2)))*1000
-                        #((3.11 + (-1.55E-03*value) + (8.45E-05*(value**2)))*1000)#*0.8 #J/kg °C
-                        
-                        rho00=1006
-                        rho10=-0.08894
-                        rho01=342.6
-                        rho11=-0.04911
-                        rho02=287.1  
-                        
-                        rho_array[index1][index2] =rho00+(rho10*value)+(rho01*x_s)+(rho11*value*x_s)+(rho02*(x_s**2))
-                        #((-0.112*value) + 1176)#*1.2 
-                            #otro ajuste de densidad((1176 + (-0.122*value) + (-3.26E-03* (value**2))) )*1.2
-                    else:
-                        cp00=120.4
-                        cp10=-59.26
-                        cp01=27.39
-                        cp20=147.5
-                        cp11=-18.59
-                        cp02=2.145
-                        cp21=25.23
-                        cp12=-0.8877
-                        cp03=0.07946
-                        cp22=1.013
-                        cp13=-0.01143
-                        cp04=0.001448
-                        cp23=0.01145
-                        cp14=-2.642e-6
-                        cp05=1.049e-5
-                        
-                        
-                        cp_array[index1][index2] =(cp00+(cp10*x_s)+(cp01*value)+(cp20*(x_s**2))+(cp11*x_s*value)+(cp02*(value**2))+(cp21*(x_s**2)*value)+(cp12*x_s*(value**2))+(cp03*(value**3))+(cp22*(x_s**2)*(value**2))+(cp13*x_s*(value**3))+(cp04*(value**4))+(cp23*(x_s**2)*(value**3))+(cp14*x_s*(value**4))+(cp05*(value**5)))*1000
-                        #((114 + (23.8* value) + (2.03*(value**2)) + (0.0845*(value**3)) + (1.69E-03*(value**4)) + (1.3E-05*(value**5)))*1000)#*2.5 #J/kg °C
-                        
-                        rho00=943.5
-                        rho10=5.072
-                        rho01=559.3
-                        rho20=0.2606
-                        rho11=11.39
-                        rho02=376.4
-                        rho30=0.003623
-                        rho21=0.168
-                        rho12=-0.06816
-                        
-                        rho_array[index1][index2] = rho00+(rho10*value)+(rho01*x_s)+(rho20*(value**2))+(rho11*value*x_s)+(rho02*(x_s**2))+(rho30*(value**3))+(rho21*(value**2)*x_s)+(rho12*value*(x_s**2))
-                        #((1216 + (10.8*value) + (0.4*(value**2)) + (4.72E-03*(value**3))))#*1.2
-                    index2 += 1
-                    
-                index1 += 1    
-            
-            
-            #PROPIEDADES A 3 TRAMOS
-            # index1 = 0
-            # for row in T_values:
-            #     #print(row)
-            #     index2 = 0
-            #     for value in row:
-            #         if ( value>-4 ):
-            #             cp_array[index1][index2] = (((-0.001*value)+3.1221)*1000)*0.8 #J/kg °C
-            #             rho_array[index1][index2] = ((-0.7064*value)+1177.7)
-            #         elif (value<=-4 and value>-7):
-            #             cp_array[index1][index2] =  ((105.06 + (17.812* value) + (0.8335*(value**2)) )*1000)*1.7 #J/kg °C
-            #             rho_array[index1][index2] = ((1240.7 + (17.185*value) + (0.7052*(value**2)) ))*1.5
-            #         else:
-            #             #cp_array[index1][index2] = 190000
-            #             cp_array[index1][index2] =  (((0.0756*value) + 5.5227 )*1000)*1.2 #J/kg °C
-            #             rho_array[index1][index2] = ((1140.4 + (0.9518*value) + (0.0122*(value**2))))
-            #         index2 += 1
-                    
-            #     index1 += 1   
-        
         # Save variables in csv file
         if(export_vals):
             
@@ -358,55 +263,19 @@ def get_conductivity(ts, coors, problem, equations=None, mode=None, **kwargs):
         
         val = nm.ones(coors.shape)
         
-        # Propiedades FCS --------------------------------------------------------------------------------------------        
-        if (extracto=='FCS'):
-            index1 = 0
-            for row in T_values:
-                index2 = 0
-                for value in row:
-                    if ( value>-3.6 ):
-                        val[index1][index2] = ((1.56E-03*value) + 0.473)*0.8
-                    else:
-                    
-                        val[index1][index2] =  ( -8.41E-03 + (-0.172*value) + (-10.4E-03*(value**2)) + (-2.75E-04*(value**3)) + (-2.64E-06*(value**4)))*0.8
-                    index2 += 1
-                
-                index1 += 1
-        
         # Propiedades STK --------------------------------------------------------------------------------------------        
-        elif(extracto=='STK'):         
-            index1 = 0
-            for row in T_values:
-                index2 = 0
-                for value in row:
-                    if ( value>-4.8 ):
-                        
-                        k00=0.5869
-                        k10=0.001554
-                        k01=-0.3407                       
-                    
-                        val[index1][index2] =(k00+(k10*value)+(k01*x_s))#*0.8
-                        #((1.54E-03*value) + 0.444)
+        if(extracto=='STK'):      
+            coeficientes_k_positivo = [0.0015469,  0.47318634]
+            coeficientes_k_negativo = [-2.09751207e-06, -2.23960338e-04, -8.74781185e-03, -1.49616656e-01,  1.10496274e-01]
+            
+            for index1, row in enumerate(T_values):
+                for index2, i in enumerate(row):
+                    if i > -3.36:
+                        val[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_k_positivo))])
                     else:
-                        k00=1.427
-                        k10=-4.913
-                        k01=-0.1271
-                        k20=2.916
-                        k11=-0.005876
-                        k02=-0.006633
-                        k21=0.01018
-                        k12=0.0001902
-                        k03=-0.0001497
-                        k22=0.0002354
-                        k13=3.88e-6
-                        k04=-1.251e-6
-                        
-                        
-                        val[index1][index2] =(k00+(k10*x_s)+(k01*value)+(k20*(x_s**2))+(k11*x_s*value)+(k02*(value**2))+(k21*(x_s**2)*value)+(k12*x_s*(value**2))+(k03*(value**3))+(k22*(x_s**2)*(value**2))+(k13*x_s*(value**3))+(k04*(value**4)))#*0.8
-                        #(-0.0434 + (-0.134*value) + (-7.5E-03*(value**2)) + (-1.85E-04*(value**3)) + (-1.67E-06*(value**4)))
-                    index2 += 1
-                    
-                index1 += 1
+                        val[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_k_negativo))]) 
+                           
+
 
         # Save variables in csv file
         if(export_vals):
@@ -442,7 +311,7 @@ def get_T_c(ts, coors, problem, equations=None, mode=None, **kwargs):
     """
     
     if mode == 'qp':
-        
+
         try:
             T_values = problem.evaluate('ev_volume_integrate.1.Omega_surf(T)', 
                                         mode='qp', verbose=False, copy_materials=True)
@@ -454,21 +323,36 @@ def get_T_c(ts, coors, problem, equations=None, mode=None, **kwargs):
                 
             T_surf = T_values.mean()            
                 #T_cava = nm.ones(ts.shape)
-               
-            time_value=ts.time
-            descenso = 7000
-            constante = 21500
-            ciclo = descenso + constante
 
+
+      
+            #coeficientes función controlador on-off
+            a0=-20.31
+            a1=-0.4273
+            b1=-0.1188
+            a2=0.3271
+            b2=-0.04853
+            a3=-0.2548
+            b3=0.1279
+            a4=0.1724
+            b4=-0.1499
+            a5=-0.1052
+            b5=0.1352
+            a6=-0.04371
+            b6=-0.1293
+            a7=-0.01711
+            b7=0.09
+            a8=-0.0001622
+            b8=-0.06818
+            w1=0.0004193
             
-            
-            tiempo_mod = time_value % ciclo
-            # CICLO DE TEMPERATURA DE LA CAVA
-            if tiempo_mod <= descenso:
-                pendiente = (26.5 - 19) / descenso              # Pendiente del tramo descendente  
-                T_cava = 273.15 + -19 - pendiente * tiempo_mod    
-            else:
-                T_cava = 273.15 + -26.5   
+            # for i in range(0, n_step):
+            #     step_time = (t1-t0)/(n_step-1)
+            #     time_value = i*step_time
+            #     print('time_value',time_value)
+            time_value=ts.time
+            T_cava =273.15+ a0+(a1*nm.cos(time_value*w1))  + (b1*nm.sin(time_value*w1))+ (a2*nm.cos(2*time_value*w1)) +(b2*nm.sin(2*time_value*w1)) +(a3*nm.cos(3*time_value*w1)) +(b3*nm.sin(3*time_value*w1)) +(a4*nm.cos(4*time_value*w1)) +(b4*nm.sin(4*time_value*w1))  +(a5*nm.cos(5*time_value*w1)) +(b5*nm.sin(5*time_value*w1))  +(a6*nm.cos(6*time_value*w1)) +(b6*nm.sin(6*time_value*w1))  +(a7*nm.cos(7*time_value*w1)) +(b7*nm.sin(7*time_value*w1)) +(a8*nm.cos(8*time_value*w1)) +(b8*nm.sin(8*time_value*w1))
+        
 
         except:
             if(debug):
@@ -575,6 +459,7 @@ def probe_hook(data, probe, label, problem):
     # Guía: Examples/linear_elasticity/its2D_4.py
     import matplotlib.pyplot as plt
     import matplotlib.font_manager as fm
+    
     
     def get_it(name, var_name):
         var = problem.create_variables([var_name])[var_name]

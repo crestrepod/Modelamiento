@@ -1,16 +1,16 @@
 {
   "model": {
-    "T0": 293.15,
-    "T_c": 246.65,
+    "T0": 299.15,
+    "T_c": 253.15,
     "E_c": 0.005,
     "E_e": 0.005,
-    "x_s": 0.338
+    "x_s": 0.401
   },
   "simulation": {
     "t0": 0,
-    "t1": 200000,
-    "n_step": 20,
-    "thickness_cylinder_surface": 0.03,
+    "t1": 75000,
+    "n_step": 11,
+    "thickness_cylinder_surface": 0.003,
     "thickness_face": 0.0001,
     "export_calculations": 0
   },
@@ -21,12 +21,13 @@
     "mesh_size": 0.01
   },
   "barril_mesh": {
-    "diameter": 0.5715,
-    "height": 0.875,
-    "mesh_size": 0.02
+    "diameter": 0.09,
+    "height": 0.1023,
+    "mesh_size": 0.005
   },
   "contenedor": "barril",
   "extracto": "STK",
   "profile_distance": 0.03,
-  "profile_tolerance": 0.01
+  "profile_tolerance": 0.002,
+  "Cava" : "pequeña"
 }
