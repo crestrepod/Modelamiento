@@ -190,22 +190,21 @@ def get_cp_rho(ts, coors, problem, equations=None, mode=None, **kwargs):
         rho_array = nm.ones(coors.shape)
     
 
-        # Propiedades FCS --------------------------------------------------------------------------------------------        
         if extracto == 'STK':
-            coeficientes_cp_positivo = [-5.31442424e-08,  3.39414118e-06, -7.63244649e-05,  7.11173325e-04, -1.83933655e-03,  3.34203004e+00]
-            coeficientes_cp_negativo = [2.46475116e-05, 3.01248763e-03, 1.39879835e-01, 3.07007061e+00, 3.19581201e+01, 1.32609805e+02]
+            coeficientes_cp_positivo = [-2.53824020e-08,  1.77929486e-06, -4.51512364e-05,  4.94611919e-04, -1.35231466e-03,  3.06330078e+00]
+            coeficientes_cp_negativo = [7.71176859e-06, 1.03984743e-03, 5.47270481e-02, 1.41133376e+00, 1.80841195e+01, 9.81607831e+01]
             
-            coeficientes_rho_positivo = [-3.31523246e-03, -5.68521821e-02,  1.12794191e+03]
-            coeficientes_rho_negativo = [2.29383704e-04, 2.41273487e-02, 9.16170874e-01, 1.50320862e+01, 1.16052005e+03]
+            coeficientes_rho_positivo = [-3.19854768e-03, -6.78486228e-02,  1.19217489e+03]
+            coeficientes_rho_negativo = [1.64563041e-04, 1.86634903e-02, 7.84905314e-01, 1.48601134e+01, 1.24941891e+03]
             
             for index1, row in enumerate(T_values):
                 for index2, i in enumerate(row):
-                    if i > -3.36:
-                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_positivo))]) * 1000 *0.8
-                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_positivo))]) *1.2
+                    if i > -5.61:
+                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_positivo))]) * 1000
+                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_positivo))])
                     else:
-                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_negativo))]) * 1000 *1.2
-                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_negativo))]) *1.2
+                        cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_negativo))]) * 1000
+                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_negativo))])
 
 
              
@@ -265,12 +264,12 @@ def get_conductivity(ts, coors, problem, equations=None, mode=None, **kwargs):
         
         # Propiedades STK --------------------------------------------------------------------------------------------        
         if(extracto=='STK'):      
-            coeficientes_k_positivo = [0.0015469,  0.47318634]
-            coeficientes_k_negativo = [-2.09751207e-06, -2.23960338e-04, -8.74781185e-03, -1.49616656e-01,  1.10496274e-01]
+            coeficientes_k_positivo = [0.00154268, 0.44935646]
+            coeficientes_k_negativo = [-1.19738879e-06, -1.38036510e-04, -5.99575345e-03, -1.18287553e-01, -3.27634272e-02]
             
             for index1, row in enumerate(T_values):
                 for index2, i in enumerate(row):
-                    if i > -3.36:
+                    if i > -5.61:
                         val[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_k_positivo))])
                     else:
                         val[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_k_negativo))]) 
@@ -326,33 +325,20 @@ def get_T_c(ts, coors, problem, equations=None, mode=None, **kwargs):
 
 
       
-            #coeficientes función controlador on-off
-            a0=-20.31
-            a1=-0.4273
-            b1=-0.1188
-            a2=0.3271
-            b2=-0.04853
-            a3=-0.2548
-            b3=0.1279
-            a4=0.1724
-            b4=-0.1499
-            a5=-0.1052
-            b5=0.1352
-            a6=-0.04371
-            b6=-0.1293
-            a7=-0.01711
-            b7=0.09
-            a8=-0.0001622
-            b8=-0.06818
-            w1=0.0004193
-            
-            # for i in range(0, n_step):
-            #     step_time = (t1-t0)/(n_step-1)
-            #     time_value = i*step_time
-            #     print('time_value',time_value)
             time_value=ts.time
-            T_cava =273.15+ a0+(a1*nm.cos(time_value*w1))  + (b1*nm.sin(time_value*w1))+ (a2*nm.cos(2*time_value*w1)) +(b2*nm.sin(2*time_value*w1)) +(a3*nm.cos(3*time_value*w1)) +(b3*nm.sin(3*time_value*w1)) +(a4*nm.cos(4*time_value*w1)) +(b4*nm.sin(4*time_value*w1))  +(a5*nm.cos(5*time_value*w1)) +(b5*nm.sin(5*time_value*w1))  +(a6*nm.cos(6*time_value*w1)) +(b6*nm.sin(6*time_value*w1))  +(a7*nm.cos(7*time_value*w1)) +(b7*nm.sin(7*time_value*w1)) +(a8*nm.cos(8*time_value*w1)) +(b8*nm.sin(8*time_value*w1))
-        
+            descenso = 7000
+            constante = 21500
+            ciclo = descenso + constante
+
+            
+            
+            tiempo_mod = time_value % ciclo
+
+            if tiempo_mod <= descenso:
+                pendiente = (26.5 - 19) / descenso  # Pendiente del tramo descendente  
+                T_cava = 273.15 + -19 - pendiente * tiempo_mod    
+            else:
+                T_cava = 273.15 + -26.5  
 
         except:
             if(debug):

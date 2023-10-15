@@ -6,7 +6,7 @@ import pandas as pd
 
 
 # Obtener y definir las variables de composición 
-filename = 'C:/Users/Camilo/Documents/Modelamiento/Colcafe/Colcafe_Camilo/Composicion/compo.txt'
+filename = 'C:\Users\Camilo\Documents\Modelamiento\Colcafe\Colcafe_Camilo\Datos\Composicion\compo.txt'
 with open(filename, 'r') as file:
     params = json.load(file)
 
