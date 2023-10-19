@@ -1,14 +1,14 @@
 {
   "model": {
     "T0": 283.15,
-    "T_c": 246.15,
+    "T_c": 246.65,
     "E_c": 0.005,
     "E_e": 0.005,
     "x_s": 0.4052
   },
   "simulation": {
     "t0": 0,
-    "t1": 250000,
+    "t1": 300000,
     "n_step": 18,
     "thickness_cylinder_surface": 0.020,
     "thickness_face": 0.0001,

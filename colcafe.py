@@ -201,7 +201,7 @@ def get_cp_rho(ts, coors, problem, equations=None, mode=None, **kwargs):
                 for index2, i in enumerate(row):
                     if i > -5.61:
                         cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_positivo))]) * 1000
-                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_positivo))])
+                        rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_positivo))]) 
                     else:
                         cp_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_cp_negativo))]) * 1000
                         rho_array[index1][index2] = sum([coef * i**potencia for potencia, coef in enumerate(reversed(coeficientes_rho_negativo))])
@@ -399,15 +399,15 @@ def get_T_c(ts, coors, problem, equations=None, mode=None, **kwargs):
         val = nm.ones([1,1,1])*pre_val
         a_time = ts.time
         
-        print('preval',pre_val)
-        print('U',U) 
-        print('Tcava',T_cava)
-        print('Tsurf',T_surf) 
-        print('ts.time',ts.time)
-        print('Pr_rc',Pr_rc)
-        print('Ra_rc',Ra_rc)
-        print('Nu_rc',Nu_rc)
-        print('h_rc',h_rc)
+        #print('preval',pre_val)
+        #print('U',U) 
+        #print('Tcava',T_cava)
+        #print('Tsurf',T_surf) 
+        #print('ts.time',ts.time)
+        #print('Pr_rc',Pr_rc)
+        #print('Ra_rc',Ra_rc)
+        #print('Nu_rc',Nu_rc)
+        #print('h_rc',h_rc)
          
         
         if(debug):
